@@ -1,4 +1,4 @@
-**Project Name: Lightweight Load Balancer**
+**Project Name: goLoadBalancerRedirect**
 
 ---
 
