@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"os"
 	"gopkg.in/yaml.v2"
+	"time"
 )
 
 var count int
+var number_retry int
 var ip_map map[int]string
 var config_map map[int]string
 
@@ -25,15 +27,15 @@ func take_conf(str string) map[int]string {
 }
 
 func collector(w http.ResponseWriter, r *http.Request) {
-	if (count > len(ip_map)){
+	if (count >= len(ip_map)){
 		count = 0
 	}
-	fmt.Println("IP TEST ["+ip_map[count]+"]")
+	fmt.Println("IP TEST ["+ip_map[count]+"]"," count: ",count)
 	if (!checkHealth(ip_map[count])) {
 		delete(ip_map,count)
 	}else {
-		fmt.Println("request redirect [https://"+ip_map[count]+"]" , " status :",count)
-		http.Redirect(w, r, "http://"+ip_map[count],http.StatusMovedPermanently)
+		fmt.Println("request redirect [https://"+ip_map[count]+"]" , " index of server :",count)
+		http.Redirect(w, r, "https://"+ip_map[count],http.StatusMovedPermanently)
 	}
 	count = count + 1
 }
@@ -43,16 +45,24 @@ func main() {
 	ip_map = take_conf("config_ip.yaml")
 	config_map = take_conf("config_lb.yaml")
 	fmt.Println("Debug MAP IP :",ip_map)
-    http.HandleFunc("/", collector)
 	ip_map = sort_ip_map(ip_map)
 	fmt.Println("Debug MAP IP AFTER SORT:",ip_map)
 	if (len(ip_map) == 0){
-		fmt.Println("No ip Valide ")
+		fmt.Println("No Config IP Valide | number retry",number_retry)
+		if (number_retry != 5){
+			number_retry += 1
+			time.Sleep(6 * time.Second)
+			main()
+		} else{
+			os.Exit(2)
+		}
 	} else {
     	fmt.Println("start load_balancing on port "+config_map[0])
+		http.HandleFunc("/", collector)
     	err := http.ListenAndServe(":"+config_map[0], nil)
     	if err != nil {
         	fmt.Println("Fail to start the load_balancing :", err)
+			os.Exit(1)
 		}
 	}
 }
