@@ -4,28 +4,33 @@ services:
   test_req:
     container_name: test_req
     build: test_req/
-    ports:
-      - "80:80"
+    networks:
+      - lb_network
+  lb:
+    container_name: lb
+    build: lb/
+    networks:
+      - lb_network
   web_container_1:
     container_name: web_1
     build: web_server/
-    ports:
-      - "81:80"
+    networks:
+      - lb_network
   web_container_2:
     container_name: web_2
     build: web_server/
-    ports:
-      - "82:80"
+    networks:
+      - lb_network
   web_container_3:
     container_name: web_3
     build: web_server/
-    ports:
-      - "83:80"
+    networks:
+      - lb_network
   web_container_4:
     container_name: web_4
     build: web_server/
-    ports:
-      - "84:80"
+    networks:
+      - lb_network
   # ftp-server:
   #   container_name: my-ftp-server
   #   environment:
@@ -35,3 +40,6 @@ services:
   #   ports:
   #     - '20-21:20-21/tcp'
   #     - '40000-40009:40000-40009/tcp'
+networks:
+  lb_network:
+    driver: bridge

@@ -1,5 +1,4 @@
-server1: 127.0.0.1:81
-server2: 127.0.0.1:82
-server3: 127.0.0.1:83
-server4: 127.0.0.1:84
-server5: 127.0.0.1:85
+server1: web_container_1:80
+server2: web_container_2:80
+server3: web_container_3:80
+server4: web_container_4:80

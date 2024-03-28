@@ -1,0 +1,10 @@
+FROM golang:1.22
+
+WORKDIR /home
+
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
+
+COPY . .
+
+CMD ["go","run","."]
