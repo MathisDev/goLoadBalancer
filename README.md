@@ -17,3 +17,4 @@ This project introduces a lightweight load balancer implemented in Go. Unlike tr
 2. Clone the repository:
    ```bash
    git clone https://github.com/MathisDev/goLoadBalancerRedirect.git
+   docker-compose up -d
