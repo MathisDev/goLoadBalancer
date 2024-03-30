@@ -14,7 +14,7 @@ This project introduces a lightweight load balancer implemented in Go. Unlike tr
   
 ### Installation
 1. Install Go (if not already installed).
-2. Clone the repository:
+2. Clone the repository and up the test cluster:
    ```bash
    git clone https://github.com/MathisDev/goLoadBalancer.git
    cd goLoadBalancer
