@@ -1,4 +1,4 @@
-server1: web_container_1:80
-server2: web_container_2:80
-server3: web_container_3:80
-server4: web_container_4:80
+server1: web_1:80
+server2: web_2:80
+server3: web_3:80
+server4: web_4:80

@@ -9,37 +9,48 @@ services:
   lb:
     container_name: lb
     build: lb/
+    ports:
+      - "80:80"
     networks:
       - lb_network
-  web_container_1:
+  web_1:
     container_name: web_1
     build: web_server/
     networks:
       - lb_network
-  web_container_2:
+  web_2:
     container_name: web_2
     build: web_server/
     networks:
       - lb_network
-  web_container_3:
+  web_3:
     container_name: web_3
     build: web_server/
     networks:
       - lb_network
-  web_container_4:
+  web_4:
     container_name: web_4
     build: web_server/
     networks:
       - lb_network
-  # ftp-server:
-  #   container_name: my-ftp-server
-  #   environment:
-  #     - FTP_PASS=123
-  #     - FTP_USER=user
-  #   image: garethflowers/ftp-server
-  #   ports:
-  #     - '20-21:20-21/tcp'
-  #     - '40000-40009:40000-40009/tcp'
+  sql:
+    container_name: sql
+    build: sql/
+    networks:
+      - lb_network    
+  grafana:
+    image: grafana/grafana
+    container_name: grafana_log
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/Users/Shared/grafana
+      - grafana-conf:/Users/Shared/grafana/conf
+volumes:
+  grafana-data:
+  grafana-conf:
+
 networks:
   lb_network:
     driver: bridge
