@@ -45,8 +45,8 @@ services:
       - 3000:3000
     restart: unless-stopped
     volumes:
-      - grafana-data:/Users/Shared/grafana
-      - grafana-conf:/Users/Shared/grafana/conf
+      - grafana-data:/etc/grafana/
+      - grafana-conf:/etc/grafana/conf
 volumes:
   grafana-data:
   grafana-conf:

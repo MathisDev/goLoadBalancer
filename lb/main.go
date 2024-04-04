@@ -29,16 +29,16 @@ func take_conf(str string) map[int]string {
 	}
 	return changeKeysIndex(data)
 }
-
+// TODO : impement algo
 func req(w http.ResponseWriter, r *http.Request) {
 	if (count >= len(ip_map)){
 		count = 0
 	}
-	currentTime := time.Now()
 	if (!checkHealth(ip_map[count])) {
 		delete(ip_map,count)
 	}else {
-		fmt.Println(currentTime.Format("2006-01-02 15:04:05"),"redirect [https://"+ip_map[count]+"]" , " index of server :",count)
+		count = whats_serv_redirect(count)
+		log.Println("Redirect to : "+ip_map[count])
 		http.Redirect(w, r, "https://"+ip_map[count],http.StatusMovedPermanently)
 	}
 	count = count + 1
@@ -48,12 +48,16 @@ func req_proxy(w http.ResponseWriter, r *http.Request) {
 	if (count >= len(ip_map)){
 		count = 0
 	}
-	log.Println("Redirect to : http://"+ip_map[count])
-	remote, _ = url.Parse("http://"+ip_map[count])
-	p := httputil.NewSingleHostReverseProxy(remote)
-	r.Host = remote.Host
-	w.Header().Set("X-Ben", "Rad")
-	p.ServeHTTP(w, r)
+	if (!checkHealth(ip_map[count])) {
+		delete(ip_map,count)
+	} else {
+		log.Println("Redirect to : "+ip_map[count])
+		remote, _ = url.Parse("http://"+ip_map[count])
+		p := httputil.NewSingleHostReverseProxy(remote)
+		r.Host = remote.Host
+		w.Header().Set("X-Ben", "Rad")
+		p.ServeHTTP(w, r)
+	}
 	count += 1
 }
 
@@ -83,9 +87,9 @@ func main() {
 			fmt.Println("config_lb.yaml not valid")
 			os.Exit(1)
 		}
-    	err := http.ListenAndServe(":"+config_map[0], nil)
-    	if err != nil {
-        	fmt.Println("Fail to start the load_balancing :", err)
+		err := http.ListenAndServe(":"+config_map[0], nil)
+		if err != nil {
+			fmt.Println("Fail to start the load_balancing :", err)
 			os.Exit(1)
 		}
 	}
